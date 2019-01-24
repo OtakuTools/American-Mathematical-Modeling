@@ -1,7 +1,8 @@
-ÒÑ±¨Ãû£¬¶ÓºÅ£º1900408¡£
+# é˜Ÿå·ï¼š1900408ã€‚
 
-Çëµã»÷£ºhttp://www.comap.com/undergraduate/contests/mcm/login.php
-Â¼ÈëÕËºÅ£ºluozhh@mail.sysu.edu.cn
-ÃÜÂë£ºLzhsysu006
-½øÈë¶ÓÎé1900408£¬µã»÷À¶É«×ÖÌåÊäÈëÍêÕûĞÅÏ¢¡£±ÈÈü¿ªÊ¼ºó£¬²½Öè3¡¢4¡¢5¡¢6»á¿ªÆô£¬°´Á÷³Ì²Ù×÷¾ÍĞĞÁË¡£
-ĞÕÃûÂ¼Èë¸ñÊ½£¨ÒÔ¹ØÑå»ÔÎªÀı£©£º "Yanhui Guan".
+è¯·ç‚¹å‡»ï¼šhttp://www.comap.com/undergraduate/contests/mcm/login.php 
+
+å½•å…¥è´¦å·ï¼šluozhh@mail.sysu.edu.cn
+å¯†ç ï¼šLzhsysu006 
+
+è¿›å…¥é˜Ÿä¼1900408ï¼Œ
