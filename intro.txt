@@ -1,0 +1,3 @@
+Louvre in Paris needs an up-to-date evacuation plan in consideration of numerous terror attacks. 
+Louvre has 5 floors containing X stairs and Y rooms. [Four] main exits are located at -2F and the ground floor. With Louvre covering more than 72 thousands square meters, it's difficult for visitors to find their way to exits on their own. Therefore, a detailed evacuation plan should show them the optimal way out as well as consider load balancing between stairs. While evacuating vistors, emergency personnel need to enter the building to notify the best path accoring to the actual[realtime] situation.
+
