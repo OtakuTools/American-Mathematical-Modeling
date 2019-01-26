@@ -10,3 +10,19 @@
 1548486951 source:c:\users\dell\desktop\2019_mcm-icm_problems\code\code\solution.cpp
 	"Solution.h"
 
+1548508546 source:c:\users\asus\desktop\mcm\code\main.cpp
+	<iostream>
+	"Solution.h"
+
+1548516402 c:\users\asus\desktop\mcm\code\solution.h
+	<vector>
+	<queue>
+	<cmath>
+	<algorithm>
+	<iostream>
+	<fstream>
+	<map>
+
+1548515278 source:c:\users\asus\desktop\mcm\code\solution.cpp
+	"Solution.h"
+

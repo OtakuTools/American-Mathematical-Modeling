@@ -1,7 +1,12 @@
 #ifndef SOLUTION_H_INCLUDED
 #define SOLUTION_H_INCLUDED
 #include <vector>
+#include <queue>
+#include <cmath>
+#include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <map>
 
 using namespace std;
 
@@ -12,17 +17,21 @@ public:
 private:
 
 
-    vector<int> exit,
-                nodePeople ;
+    vector<int> exit, tag, parent;
+    vector<double> capacity,
+                   maxCapacity,
+                   speed;
+    map<int, int> encode;
     vector< vector<pair<int , int> > >  graph,
                                         bestResult,
                                         nowResult;
 
 
     int evaluate(vector< vector<pair<int , int> > > checkResult );
+    void read(int);
     void saSolve();
     bool canAccept(double temperature , int newValue , int oldValue);
-    vector< vector<pair<int , int> > > generateFirstResult();
+    void generateFirstResult();
     vector< vector<pair<int , int> > > generateNewResult();
 
 };

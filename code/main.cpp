@@ -6,7 +6,7 @@ using namespace std;
 int main()
 {
     Solution sol;
-    string inputDirPath = "";
+    string inputDirPath = "data.txt";
     sol.solve(inputDirPath);
 
     return 0;
