@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1548486939 source:c:\users\dell\desktop\2019_mcm-icm_problems\code\code\main.cpp
+	<iostream>
+	"Solution.h"
+
+1548486943 c:\users\dell\desktop\2019_mcm-icm_problems\code\code\solution.h
+	<vector>
+	<iostream>
+
+1548486951 source:c:\users\dell\desktop\2019_mcm-icm_problems\code\code\solution.cpp
+	"Solution.h"
+
