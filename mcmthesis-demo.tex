@@ -1,0 +1,654 @@
+%%
+%% This is file `mcmthesis-demo.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% mcmthesis.dtx  (with options: `demo')
+%% 
+%% -----------------------------------
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C)
+%%     2010 -- 2015 by Zhaoli Wang
+%%     2014 -- 2016 by Liam Huang
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%% 
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainer of this work is Liam Huang.
+%% 
+\documentclass{mcmthesis}
+\mcmsetup{CTeX = false,   % 使用 CTeX 套装时，设置为 true
+        tcn = 1900408, problem = D,
+        sheet = true, titleinsheet = true, keywordsinsheet = true,
+        titlepage = false, abstract = false}
+\usepackage{palatino}
+\usepackage{lipsum}
+\usepackage{indentfirst}%%%%%%%%%%%%%设置首行缩进！！！
+\title{Time to leave the Louvre}%\MCMversion
+%\author{\small \href{http://www.latexstudio.net/}
+ % \includegraphics[width=7cm]{mcmthesis-logo}%对应PDF中的latex studio标志
+\date{\today}
+\begin{document}
+\begin{abstract}
+HF radio signal transmission methods are often used for maritime communications. Under normal circumstances, the attenuation of electric waves after being reflected on different sea surfaces is different. The electric waves tend to attenuate more in the turbulent sea surface. Turbulent sea surface is where the nature of the sea changes rapidly. Seawater's local dielectric constant, reflection point, electromagnetic gradient will vary with the wave height and water velocity.
+
+This paper describes how to set up a maritime signal reflection model and use this model to solve some practical problems.
+
+Firstly, we used the Fresnel reflection law to create a sea surface signal reflection model. In order to compare the signal strength after the first reflection of the radio signal on the turbulent sea surface and the calm sea surface, we first defined the rough sea surface using the Rayleigh criterion and then simulated the sea surface model using the double iteration algorithm. The rough sea surface reflection coefficient was then calculated by using the expression of the roughness correction factor provided by CCIR. Through the calculation of signal reflection power we compare the results. In order to calculate the maximum hops of the signal before the signal strength falls below the available signal-to-noise ratio (SNR) threshold, we used the relationship between the reflected power and the reflection coefficient, iterated on the power, and finally found the maximum hops.
+
+Secondly, we extend the reflection model of the sea surface signal to the land by changing the complex reflection coefficient of the medium, and compare the signal strength after the reflection of the electric wave on the rough terrain and the flat terrain.
+
+Then, for the third problem, since the ship in question is supposed to receive the signal, we must add the effects of Doppler shift and earth curvature to our sea surface signal reflection model. By calculation, these two variables have little effect on the actual results. So using the model we improved, we calculated the distance and the time of the ship to keep communication.
+%\lipsum[1]%添加论文内容！！！
+\begin{keywords}
+Fresnel reflection law;Rayleigh criterion;CCIR;double iteration algorithm;Doppler shift%这里写关键字！！！ 
+\end{keywords}
+\end{abstract}
+\maketitle
+\tableofcontents
+\newpage
+%%介绍%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\subsection{Problem background}
+Louvre in Paris needs an up-to-date evacuation plan in consideration of numerous terror attacks. 
+Louvre has 5 floors containing X stairs and Y rooms. Four main exits are located at the second floor underground and the ground floor. With Louvre covering more than 72 thousands square meters, it's difficult for visitors to find their way to exits on their own. Therefore, a detailed evacuation plan should show them the optimal way out as well as consider load balancing between stairs. While evacuating vistors, emergency personnel need to enter the building to notify the best path accoring to the actual[realtime] situation.
+
+%%我们的问题%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Our task}
+First, we need to create a mathmatical model of emergency evacuation and then solve the following problems:
+\begin{itemize}
+\item Our emergency evacuation model should be used to explore different plans under different conditions. The best plan should evacuate the visitors in  an efficient way, while allowing the emergency personnel to enter the building as fast as possible.
+\item We should figure out potential bottlenecks in our model that may limit the evacuation efficiency.
+\item We should build up an adaptable model responding to various types of potential threats and finding the real-time optimized route out.
+\item After setting up the model, we need to validate the model and discuss how Louvre museum can bring it into reality.
+\item Prepare a short report about the policy and procedural recommendations for emergency management of the Louvre and discuss how our model can be implemented for other large, crowded structures. 
+
+\end{itemize}
+%%假设%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Assumptions}
+To simplify our problems, we make the following basic assumptions:
+\begin{itemize}
+\item We assume that the model is applied as follows: the summer daylight near the Tropic of Cancer in the Pacific, the sea temperature is 20 degrees.
+\item Assuming that the incident angle of the ground base station is 45 degrees, the frequency of the transmitted high-frequency signal is 30 MHz and the wavelength is 10 m
+\item Assuming that the ionosphere is in total reflection and does not consider air attenuation.
+\item For the third question, we assume that the speed of the ship is 20 nautical miles per hour, regardless of the receiver's loss of electromagnetic waves.
+\item The sun is in a steady cycle.
+\item The distance from the ionosphere to the sea is assumed to be 60 km.
+\end{itemize}
+%%命名法%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Nomenclature}
+In this paper we use the nomenclature in Table1 to describe our model. Other symbols that are used only once will be described later.
+%表格
+\begin{table}[htbp]
+\centering  % 表居中
+\begin{tabular}{lccc}  % {lccc} 表示各列元素对齐方式，left-l,right-r,center-c
+\hline
+Symbol &Significance\\ \hline  % \hline 在此行下面画一横线
+$\mathrm{f}$ &Frequceny \\         % \\ 表示重新开始一行
+$\lambda$ &Wavelength \\        % & 表示列的分隔线
+$\theta$ &Incidence angle \\ 
+$\Delta h$ &Effective wave height\\ 
+$\epsilon_{r} $ &Seawater relative dielectric constant\\ 
+$\epsilon_{k}$ &Sea relative dielectric constant\\
+$\mathrm{E}_{in}$ &Incident wave electric field strength\\
+$\mathrm{E}_{out}$ &Reflected wave electric field strength\\
+$\mathrm{f}_{d}$ &Doppler shift\\
+$\mathrm{P}$ &Radio power\\ \hline
+\end{tabular}
+\caption{Nomenclature}
+\end{table}
+%结束
+%%模型陈述%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{ Statement of our model}
+In this section, we discuss all the details about our model. This model needs to be involved in various fields, from the effects of solar activity on the ionosphere to seasons changes on the seawater environment. First, we collected data on the effects of ionospheric wave propagation on sky wave using shortwave communications. We then found that seawater conductivity and relative permittivity are all affected by seasonal changes. Based on these materials, we weigh the various aspects factors established the maritime shortwave communication model. Based on the reflection principle of shortwave signal between ionosphere and sea level, this model calculates the sea level's reflection on shortwave signals by combining the influence of weather and seasons on seawater temperature and the influence of sea waves on the wind, resulting in the variation of sea level loss, and then to determine the shortwave signal can spread distance.
+\subsection{maritime shortwave communication model}%海平面信号反射模型
+
+\subsubsection{The reflection coefficient of the radio waves on calm sea surface}%平静海面上电波传播的反射系数
+In the process of communication at sea, due to the different intrinsic impedances of air and seawater, microwaves will reflect and refract of electromagnetic waves on the surfaces of the two media.
+%%加第一张图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo3.jpg}
+\caption{calm sea surface reflection schematic} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Air is the ideal medium and seawater is a non-ideal conductor medium (relative permittivity $\epsilon_{r}$ = 80, conductivity $\sigma$ = 4$\Omega$ / m). The reflection coefficient is related to the incident angle, the polarization of the electric wave, the frequency of the electric wave and the characteristics of the reflecting medium .According to the Fresnel reflection law:
+%%插入第一个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{eqnarray}
+&\Gamma_\parallel=\frac{E_{rm}}{E_{im}}=\frac{\epsilon_kcos\theta-\sqrt{\epsilon_k-sin^2\theta}}{\epsilon_kcos\theta+\sqrt{\epsilon_k-sin^2\theta}}\\
+&\Gamma_\perp=\frac{E_{rm}}{E_{im}}=\frac{cos\theta-\sqrt{\epsilon_k-sin^2\theta}}{cos\theta+\sqrt{\epsilon_k-sin^2\theta}}
+\end{eqnarray}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$E_{rm}$ and $E_{im}$ are the complex amplitudes of incident and reflected waves of horizontal or vertical polarized waves respectively, $\theta$ is the incident angle, $\epsilon_k$ is the relative complex dielectric constant of seawater:
+%%插入第二个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\epsilon_k=\epsilon_r-j\frac{\sigma}{\omega\epsilon_0}=\epsilon_r-j60\sigma\lambda=80-j240\lambda
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %\begin{itemize}
+ %\item the initial velocity and rotation of the ball,
+ %\item the initial velocity and rotation of the bat,
+ %\item the relative position and orientation of the bat and ball, and
+ %\item the force over time that the hitter hands applies on the handle.
+ %\end{itemize}
+
+ %\lipsum[3]
+\subsubsection{ The reflection coefficient of the radio waves on turbulent sea surface\cite{3}}%粗糙海面上电波的反射系数
+In the calm sea, the reflection of radio waves is mostly specular; on the rough sea, the reflection of radio waves is mostly diffuse reflection. Under normal circumstances, we use the Rayleigh criteria\cite{2} to distinguish between the rough sea and calm sea:
+%%插入第三个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\Delta{h}\leq\frac{\lambda}{8sin\theta}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+When the roughness in the Fresnel reflection region of the sea surface meets the rayleigh criterion, the sea surface can be defined as a calm sea surface, otherwise it is a rough sea surface.
+%%插入第二张图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo4.jpg}
+\caption{Turbulent sea surface reflection schematic} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+For the reflection of rough sea surface, we must adopt the method of multiplying the roughness correction factor $\rho$ by smooth sea surface reflection coefficient:
+%%插入第四个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\Gamma'=\rho\Gamma
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Consultative Committee of International Radio(CCIR)  gives the expression for the rough correction factor $\rho$\cite{1}:
+%%插入第五个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\rho=\frac{1}{\sqrt{3.2g-2+\sqrt{(3.2g)^2-7g+9}}}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+among them
+%%插入第六个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{eqnarray}
+&g=0.5(\frac{4\pi{h}fsin\theta}{c})^2\\
+&h=0.005\omega^2
+\end{eqnarray}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Where $\omega$ is the wind speed, in units of m / s.
+%%插入第三张表格%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htbp]%表格！！！
+\centering  % 表居中
+\begin{tabular}{lccc}  % {lccc} 表示各列元素对齐方式，left-l,right-r,center-c
+\hline
+
+Wind speed in one direction &Average height\\ \hline  % \hline 在此行下面画一横线
+19km/h(12mph) &0.27m(0.89ft) \\         % \\ 表示重新开始一行
+37km/h(23mph) &1.5m(4.9ft) \\        % & 表示列的分隔线
+56km/h(35mph) &4.1m(13ft)\\
+74km/h(46mph) &8.5m(28ft)\\
+92km/h(57mph) &14.8m(49ft)\\  \hline
+\end{tabular}
+
+\caption{The relationship between wind speed and wave height\cite{4}}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Electric wave reflection power}%电波的反射功率
+The reflected power of the wave can be deduced from the following formula:
+%%插入第七个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{eqnarray}
+E_{in}\Gamma=E_{out}\\
+P_r=(\frac{E_{out}}{E_{in}})^2=\Gamma^2
+\end{eqnarray}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Signal hop}%信号的跳跃
+For frequencies below the maximum usable frequency (MUF), HF radio waves from terrestrial sources reflect off the ionosphere to the Earth where they may again reflect back to the ionosphere, where they may reflect back to Earth again, and so on. This is the signal hop between the sea and the ionosphere.
+
+As the number of signal hops increases, the intensity of the signal will continue to diminish, which we would not like to see if the signal strength decreases below the available SNR threshold.
+
+In order to solve this problem, we can regard the last reflected wave power as the next incident wave power, from which we can draw:
+%%插入第八个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+P_{n-1}\Gamma=P_n
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Through this formula, after n iterations, the number of hops that the signal can occur within the lower limit of the prescribed power $P_{n}$ can be obtained.
+
+ %\lipsum[4]
+\subsection{Model Description of Terrestrial HF Communication}%陆地平面信号反射模型
+According to the solution of the first problem, the establishment of the maritime shortwave communication model is to determine the power intensity of the reflected electromagnetic wave and the propagation distance of the shortwave signal according to the reflection coefficient of the electromagnetic wave. Similarly, when a shortwave signal propagates on a smooth surface, it resembles a calm sea surface at sea. The reflection at this time is a specular reflection. The reflection on the rugged ground in a rugged mountainous area resembles the rough sea surface on which the sea surface reflects. This includes diffuse and specular reflections. At this point, we only need to collect the relative permittivity and conductivity of different types of topography, so we can solve the problem by using the model of the first problem.
+\subsubsection{Electrical parameters of different terrains and terraces}%不同地形地面的电参数
+%%插入第三张图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo25.jpg}
+\caption{Ground electrical parameters} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+According to the electrical parameters and the first model of the reflection coefficient calculation formula(1)(2) can be obtained for different types of ground for short-wave signal reflection coefficient.
+%\emph{center of percussion} [Brody 1986],  %\lipsum[5]
+\subsubsection{The reflection coefficient of the rugged terrain}%崎岖地面的反射系数
+According to the first problem of solving the sea surface in the shortwave maritime communication model, we can obtain the reflection coefficient of the rough terrain by analogy. Similarly, the reflection of shortwave signals on rough terrain is similar to that of rough seas, mostly diffuse. When calculating the reflection coefficient of the rough sea surface in the first model, the Rayleigh criterion is used to determine the distinction between the rough sea surface and the calm sea surface. Extend this model to the calculation of the reflection coefficient of rugged terrain, we can also use this criterion to distinguish between rough and smooth terrain. In this way, the meaning of delta h in the formula changes from wave height to topography. At the same time, this parameter is no longer affected by the wind.
+
+The problem of reflection on rugged ground is still solved by multiplying the roughness correction factor $\rho$ by the smooth sea surface reflection coefficient:
+%%插入第九个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\Gamma'=\rho\Gamma
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Rough correction factor $\rho$ still use the expression(6)(7)(8).
+
+\subsubsection{Electric wave reflection power}%电波的反射功率
+Still use the expression(9)(10)
+\subsection{Doppler shift\cite{2}}%多普勒频移
+\subsubsection{Doppler shift caused by shipborne receiver motion}%由于船上接收机运动而产生的多普勒频移
+The Doppler frequency shift due to the movement of the receiver on the ship is related to the velocity of the object, the signal frequency and the included angle between the direction of the incoming wave and the direction of the motion:
+%%插入第十个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+f_{d1}=(V_1/\lambda)\cdot{cos\alpha}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Where, $V_{1}$ is the speed of the ship, alpha is the angle between the direction of the ship's motion and the incidence of the radio waves.
+%%插入第四张图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo7.jpg}
+\caption{Ships accept shortwave Simulation diagram} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{ Doppler shift caused by sea surface wave motion}%由于海面波浪运动引起的多普勒频移
+According to the principle of fluid dynamics, wave speed of movement $V_{2}$ is 
+%%插入公式14%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+V_{2}=(gL/2\pi)
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Where g is the acceleration of gravity, g=9.8m/s, L is wavy repeat intervals. When the Bragg resonance condition is satisfied, L=$\lambda$/2sin$\theta$, The Doppler shift between the reflected signal frequency and the transmitted carrier frequency is:
+%%插入第十一个公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+f_{d2}=(V_2/\lambda)\cdot{cos\beta}=\left[(gL/2\pi)1/2/\lambda\right]\cdot{cos\beta}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Among them, $\beta$ is the angle between the direction of wave motion and the incident direction of waves.
+
+ %\begin{Theorem} \label{thm:latex}
+ %\LaTeX
+ %\end{Theorem}
+ %\begin{Lemma} \label{thm:tex}
+ %\TeX 
+ %\ end{Lemma}
+%\begin{proof}
+%The proof of theorem.
+%\end{proof}
+
+ %\lipsum[6]
+
+
+ %\lipsum[7]
+
+\section{Implementation and result}
+
+\subsection{The solution of maritime shortwave communication model}% 海洋信号反射模型求解
+Because the vertical polarization does not have the phenomenon of total refraction, and it is not easy to produce the polarization current, avoiding the large energy attenuation and ensuring the effective signal propagation, the vertical polarization mode is adopted for the radio waves.
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=10cm]{photo9.jpg}
+\caption{Calm sea simulation map} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+\item Take the data into Eqs. (2) and (3) to obtain the vertical polarization reflection coefficient. After the first reflection of the calm sea surface is obtained by using the formula (10) 
+\item Using the formula (4), we can calculate the sea surface model using matlab to simulate the sea surface when the sea surface wind is level 5 (Double iteration algorithm can put some random shapes like Figure 6(1) and Figure 6(2) together to simulate the ocean surface like Figure 6(3)).
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo8.jpg}
+\caption{Wave generated simulation} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Using the formula (5) can calculate the signal reflection power of the turbulent sea surface.
+\item Calculation results
+%%插入表格%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%表格
+\begin{table}[htbp]
+\centering  % 表居中
+\begin{tabular}{lccc}  % {lccc} 表示各列元素对齐方式，left-l,right-r,center-c
+\hline
+Calm ocean surface &Turbulent ocean surface\\ \hline  % \hline 在此行下面画一横线
+97.947W &88.496W\\    \hline     % \\ 表示重新开始一行
+\end{tabular}
+\caption{Signal reflection power}
+\end{table}
+%结束
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item By comparing the reflected power of the waves after the first refraction of the calm sea surface and the rough sea surface, it is easy to find out that there is less signal loss when the waves are reflected by calm sea surface.
+\item After iteration through the formula (11) by using Matlab, the maximum number of hops of the signal is 55 before the signal strength falls below the available signal-to-noise (SNR) threshold of 10 dB.
+\end{itemize}
+\subsection{Solution of land signal reflection model}% 陆地信号反射模型求解
+\begin{itemize}
+\item Calculation results
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo31.jpg}
+\caption{Model calculation results} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo11.jpg}
+\caption{Mountain produce simulation map} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item Based on the above analysis, we found that the reflection of the short-wave signal is better than that of the normal one, and the power of the reflected signal can still reach 95.065W. For the rugged terrain, we find that the reflected power has a serious power loss compared with the original signal. There are two reasons:
+
+1. Ground absorption shortwave signal more
+
+2. Due to the rugged terrain, most of the signal's power is dissipated in diffuse reflection.
+\item By comparison of soil types, we find that the reflected power of wet soil on signals is similar to that on rough terrain and on rough terrain, but wet soil has less power loss than dry soil. Describe the signal loss of wet soil is weaker than dry soil. The wet soil is obviously better than dry soil on the number of flat ground reflection, indicating that the type of soil has a very large impact on the propagation distance of shortwave signals. There is no difference in the minimum valid peak height and average peak height of the signal reflected on the rugged terrain of the two soil types.
+\end{itemize}
+\subsection{Solution of maritime mobile communication model}
+Due to the movement of the vessel, when the receiver on the ship receives the signal ,calculates the resulting Doppler shift according to the model's formula(13)(15):
+
+Doppler shift caused by boat motion: 0.235Hz
+
+Doppler shift caused by sea level wave motion: 0.727Hz
+
+%\lipsum[8] \eqref{aa}
+
+From the result of Doppler shift, we can find out whether Doppler frequency shift caused by ship motion or Doppler frequency shift caused by sea level wave is very small relative to the frequency of short-wave signal itself, so we In considering this issue, can ignore the impact of Doppler shift.
+
+At the same time, there is another factor that affects this issue, that is, the curvature of the earth. The following figure shows the calculation of the Earth's curvature:
+
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=10cm]{photo12.jpg}
+\caption{Arc length calculation chart} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+As the cross section of the earth is shown above, the red line represents the Earth's radius R = 6371Km. Using Matlab to simulate the above figure, the following figure shows the red line as the ionosphere, the green line as the sea surface and the blue line as the path for transmitting radio waves. The angle between the blue line and the green line is $\gamma$ = 45 degrees, the height of the ionosphere from the sea surface is H = 60Km, then the chord is:
+%%插入公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+C=\frac{H}{tan45^\circ}\times2
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+According to the cosine theorem:
+%%插入公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+C^2=R^2+R^2-2R^2cos\alpha
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Calculate the central angle:
+%%插入公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\alpha=arccos(\frac{2R^2-C^2}{2R^2})
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Then obtaining the arc length L:
+%%插入公式%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+L=\alpha{R}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo13.jpg}
+\caption{matlab calculated chord diagram} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In order to determine the effect of curvature on the final, we calculate the maximum time that the vessel can hold using the same multi-hop path and the maximum distance traveled (assuming the ship's sailing speed is 20 knots):
+
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=14cm]{photo29.jpg}
+\caption{Model calculation results} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Based on the calculated results, we find that the curvature of the earth has a great influence on the longest time that the ship can use the same multi-hop path and the maximum distance traveled. So we can not ignore the effects of earth curvature.
+%\begin{equation}
+%a^2 \label{aa}
+%\end{equation}
+
+%\[
+ % \begin{pmatrix}{*{20}c}
+ % {a_{11} } & {a_{12} } & {a_{13} }  \\
+  % {a_{21} } & {a_{22} } & {a_{23} }  \\
+  % {a_{31} } & {a_{32} } & {a_{33} }  \\
+  % \end{pmatrix}
+  % = \frac{{Opposite}}{{Hypotenuse}}\cos ^{ - 1} \theta \arcsin \theta
+ %\]
+ %\lipsum[9]
+
+ %\[
+  % p_{j}=\begin{cases} 0,&\text{if $j$ is odd}\\
+  % r!\,(-1)^{j/2},&\text{if $j$ is even}
+ %  \end{cases}
+ %\]
+
+ %\lipsum[10]
+
+ %\[
+   %\arcsin \theta  =
+  % \mathop{{\int\!\!\!\!\!\int\!\!\!\!\!\int}\mkern-31.2mu
+  % \bigodot}\limits_\varphi
+  % {\mathop {\lim }\limits_{x \to \infty } \frac{{n!}}{{r!\left( {n - r}
+  % \right)!}}} \eqno (1)
+ %\]
+
+\section{Sensitivity Analysis }
+In our modeling process, to simplify the problem, we assume that many conditions are fixed. But in fact these variables will have a greater impact on the final result, so in order to test the stability of our model, the following is the stability analysis.
+
+\subsection{Effect of Transmitter Radio wave Angle}%发射机发射电波角度的影响
+By observing the figure below, it can be seen that the amplitude of the reflection coefficient increases with the increase of the emission angle. When the emission angle is greater than 0.2$\pi$, the relationship with the reflection coefficient of the signal is close to the linear relationship. Select 45 degrees as the launch angle, the model is relatively stable and easy to model the establishment and calculation.
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=8cm]{photo15.jpg}
+\caption{Reflection coefficient with angle relation chart} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Effect of Frequency on Amplitude of Complex Dielectric Constant}%频率对复介电常数幅值的影响
+As can be seen from the Figure13 below, the amplitude of the complex dielectric constant decreases with increasing frequency, changing rapidly as early as 0 $\sim$ 3MHZ. When the frequency is between 3MHz $\sim$ 30MHz required HF frequency, the frequency of change is gentle, easy to value analysis, the model is more stable.
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=8cm]{photo18.jpg}
+\caption{Amplitude of complex permitivity with frequency relation chart} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Effect of Frequency on Phase of Complex Dielectric Constant}%频率对复介电常数相位的影响
+It can be seen from the image that the frequency is linear with the complex dielectric constant phase. As the frequency increases, the phase of the complex dielectric constant decreases, the model changes steadily, and the data analysis results are more accurate.
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=7cm]{photo19.jpg}
+\caption{Phase of complex permitivity with frequency relation chart} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Effect of angle on Doppler shift}%角度对多普勒频移的影响
+The Doppler shift decreases with the increase of the emission angle. When the emission angle is greater than 0.2$\pi$, the Doppler shift tends to be stable. Therefore, when the angle of incidence is 0.25$\pi$, the model calculated is more stable and accurate.
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=7cm]{photo20.jpg}
+\caption{Doppler shift witn angle relation chart} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Effect of Frequency and Ship Speed on Doppler Shift}%频率和船速对多普勒频移的影响
+It can be seen from the image that the selection of the speed of the ship and the selection of the frequency and the Doppler shift are all positively related to the linear change of the relationship. Therefore, the values selected by the two have little effect on the stability of the model. This model selected 30MHZ and 20Kn boat speed built model stability is still high.
+%%插入图片%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=11cm]{photo21.jpg}
+\caption{Doppler shift with different variables relationship comparison chart} \label{fig:aa}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\lipsum[11]
+
+\section{Strengths and weaknesses}
+
+\subsection{Strengths}
+\begin{itemize}
+\item The maritime shortwave communication model based on sky-wave propagation minimizes signal loss and enables it to propagate long distances before the signal strength is below the available signal-to-noise (SNR) threshold of 10 dB.
+\item The model was established, taking into account all aspects of the impact of factors, and then by considering the impact of different factors. Finally, those important factors cannot be ignored was added into the model. So that makes the model more broadly applicable.
+\item The model uses precise parameters, but also added the impact of various factors, so that the stability of the model increased. Therefore, the calculation results obtained in use can well fit the actual situation
+\end{itemize}
+
+\subsection{Weaknesses}
+\begin{itemize}
+\item We neglected the signal reflection in the ionosphere when calculating the signal reflection loss, neglecting the sun's influence on the ionosphere. This may lead to instability of the ionosphere in the event of a solar storms, resulting in a large error in our model results from the actual situation.
+\item The model ignores the loss of signal during propagation, which may result in serious attenuation of the signal in case of thunderstorm or fog, leading to communication interruption, but our model can not judge this situation.
+\item The model ignores the impact of Doppler shift on the moving target communication. According to the sensitivity analysis, we find that the model has high stability when the ship's speed is about 20 knots. As the boat speed continues to increase, the resulting Doppler shift will be more pronounced, and our model may have some errors at this time.
+\end{itemize}%\lipsum[6]
+
+
+%\lipsum[9]
+
+\section{Conclusions}
+In this paper, firstly, we establish a marine signal reflection model using the related knowledge of Schnell reflection law and Rayleigh criterion, and discuss the signal strength attenuation of the radio signal after the first reflection on the calm and rough sea surface .The model is easy to implement, easy to prove, effectively solve the high-frequency waves in different forms of the spread of the sea.%\lipsum[6]
+
+Secondly, we shifted the issue to land again, comparing the situation after radio waves were reflected in rough mountains and flat mountains.
+
+Thirdly, we solved a specific problem by slightly changing our model, adding the Doppler shift, taking into account the influence of the Earth's curvature and establishing a sea surface communication model that can be used in actual maritime communications. This model has a lot of practical significance.
+
+Finally, we analyze the sensitivity of the model and discuss the impact of various factors on the model, which helps to optimize the model.
+
+Not only that, our model can be generalized to a variety of types of surface propagation problems, and can be widely used.
+
+
+%\lipsum[6]
+
+%\cite{1}插入参考文献！！！
+
+
+ %\lipsum[12]
+
+
+ %\begin{itemize}
+ %\item \textbf{Applies widely}\\
+ %This  system can be used for many types of airplanes, and it also
+ %solves the interference during  the procedure of the boarding
+ %airplane,as described above we can get to the  optimization
+ %boarding time.We also know that all the service is automate.
+ %\item \textbf{Improve the quality of the airport service}\\
+ %Balancing the cost of the cost and the benefit, it will bring in
+ %more convenient  for airport and passengers.It also saves many
+ %human resources for the airline. \item \textbf{}
+ %\end{itemize} %
+%%这里插入IEEE报告%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A short note in IEEE Communications Magazine.}
+\begin{Large}
+\centerline{Propagation Modeling of HF Radio Waves at Ocean Surface}
+\end{Large}
+HF radio is wildly used in the communication of the modern society. When we talk about HF radio a very important element must be concerned that is the propagation of HF radio waves at Ocean Surface. Due to the complex environment and changing electrical parameters, the wave's propagation off the turbulent ocean is very hard to discuss. By doing many calculations, our group has built a model for the common situation of the HF radio wave propagation at the ocean surface. And discuss the several problems of the difficulties in the propagation.
+
+In our paper by using Double stacking model we successfully create a model for the turbulent of the ocean and use this model to simulate the environment of the ocean when the wind level is at five. Our calculation and assumption are based on this model.
+
+In our calculation we assume a series of conditions to simplify our model which do not bother the result of the calculation. We mainly calculated the following three questions:
+ \begin{itemize}
+ \item The propagation of the HF radio in the turbulent ocean and the calm ocean.
+ \item The propagation of the HF radio in the rugged terrain and smooth terrain.
+ \item The communication system of the HF radio on the shipboard which travel across the sea.
+ \end{itemize}
+
+For the first problem we use the Fresnel reflection law to determine the reflection coefficient of the turbulent ocean and the calm ocean. With rough correction factor provided by the CCIR we can define the reflection coefficient of the turbulent ocean and the height or speed of the sea waves. We calculate the Doppler shift and find it could be ignore in our model. And thanks to the good electrical characteristics of ionosphere we can easily get our result. We find that when the HF radio propagates through the calm ocean most energy is reflected back to the ionosphere. But for the turbulent ocean the power loss is much greater than the calm ocean and the reflection can hold on for many successive hops which enable the distance of the HF radio could travel and expand the application of the HF radio.
+
+For the second problem we use the model we have built to create a 3D model as the rugged terrain. And we discuss two soil conditions (dry and wet) to adapt to different areas. We compared the land environment with the ocean environment and find that the land has much more energy loss than the ocean environment which may result from the ground wave interference and the signal propagation off the mountain is much weaker than the ocean surface. So we get our conclusion is that the ocean surface is much suitable for the propagation of the HF radio.
+
+For the third problem we assume a boat which travels at 20kn (37km/h) and get the signal from the incident point. For the moving boat we must concern the Doppler shift and through the calculation we have find that the shift is very weak so we ignore the Doppler shift in our model for third problem and take considering at the model of the boat how to get the signal from the incident point after many reflections. We adapt our old model for the last two problems and finally calculate the distance and the time of the boat to keep communication.
+
+Our group has successfully build an effective model for the use of the ocean surface and calculate the reflection attenuation for the turbulent ocean and for the moving ships we calculate the communication time and distance which will help for the building of the communicating system at the ocean surface.
+
+I hope our research could help the development of communication area and could be published in IEEE Communication Magazine. Thank you.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%这里添加参考文献%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{99}%添加参考文献
+\bibitem{1}WANG Ying, GU Jian.Research and simulation analysis of radio reflection characteristic over the ocean[J].Electronic Design Engineering,2016,24(05):113-115+119
+Publishing Company , 1984-1986.
+\bibitem{2}LING Shao, YAN Li. Research on the Characteristics of Mobile Microwave Transmission over the Sea. Communication Management and Technology,vol. 2,35-37,2012
+\bibitem{3}Su Yide, Lu Ming, Zang Wei. Simulation and Analysis of the Sea Surface Backscattering Coefficient for Radio Fuze [J].Journal of Weapon - Equipment Engineering,2017,38(05):52-55+60
+\bibitem{4}\url{https://en.wikipedia.org/wiki/Wind_wave/}
+\bibitem{5}\url{http://www.360doc.com/content/15/0928/00/25985591_501911036.shtml}
+\bibitem{6}\url{https://www.sciencedirect.com/science/article/pii/0011747174900667}
+\bibitem{7}Donald E. Barrick,Theory of HF and VHF propagation across the rough sea, 1, The effective surface impedance for a slightly rough highly conducting medium at grazing incidence,Radio Science  Vol. 6, Issue: 5, 517-526,May 1971
+
+\bibitem{8}I.~R. Young,W. Rosenthal,F. Ziemer,A three-dimensional analysis of marine radar images for the determination of ocean wave directionality and surface currents,View  issue TOC Vol 90, 1049 - 1059,20 January 1985
+
+\bibitem{9}D.~E. Barrick,J.~M. Headrick,R.~W. Bogle,Sea backscatter at HF: Interpretation and utilization of the echo,IEEE,673 - 680,June 1974
+
+\end{thebibliography}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{appendices}%添加代码文件
+
+\section{First appendix}
+
+ %\lipsum[13]
+
+Here are simulation programmes we used in our model as follow.\\
+
+\textbf{\textcolor[rgb]{0.98,0.00,0.00}{About the calculation of earth curvature:}}
+\lstinputlisting[language=Matlab]{./code/qvlv.m}
+
+\textbf{\textcolor[rgb]{0.98,0.00,0.00}{About Wave Waveform Calculation:}}
+\lstinputlisting[language=Matlab]{./code/waveform.m}
+\section{Second appendix}
+
+The solution to the three questions about the model \\
+
+ \textcolor[rgb]{0.98,0.00,0.00}{\textbf{Question one:}}
+\lstinputlisting[language=Matlab]{./code/Q1.m}
+
+ \textcolor[rgb]{0.98,0.00,0.00}{\textbf{Question two:}}
+\lstinputlisting[language=Matlab]{./code/Q2.m}
+
+ \textcolor[rgb]{0.98,0.00,0.00}{\textbf{Question three:}}
+\lstinputlisting[language=Matlab]{./code/Q3.m}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{appendices}
+\end{document}
+
+%% 
+%% This work consists of these files mcmthesis.dtx,
+%%                                   figures/ and
+%%                                   code/,
+%% and the derived files             mcmthesis.cls,
+%%                                   mcmthesis-demo.tex,
+%%                                   README,
+%%                                   LICENSE,
+%%                                   mcmthesis.pdf and
+%%                                   mcmthesis-demo.pdf.
+%%
+%% End of file `mcmthesis-demo.tex'.
