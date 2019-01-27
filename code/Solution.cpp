@@ -53,7 +53,7 @@ void Solution::solve(string path){
     cout << "a" <<endl;
     generateFirstResult();
     cout << "b" <<endl;
-    //saSolve();
+    saSolve();
 }
 
 int Solution::evaluate(vector< vector<pair<int , int> > > checkResult ){
@@ -74,7 +74,7 @@ int Solution::evaluate(vector< vector<pair<int , int> > > checkResult ){
                 q.push(checkResult[pos][j].first);
             }
         }
-        cout << "total finish" <<endl;
+        //cout << "total finish" <<endl;
         // maxCapacity表示节点最大容量
         while(total > 0.01) {
             queue<int> node;
@@ -92,27 +92,28 @@ int Solution::evaluate(vector< vector<pair<int , int> > > checkResult ){
                 }
                 int remain = maxCapacity[pos] - t_capacity[pos];
                 for(int j = 0; checkResult[pos].size() > 0 && j < checkResult[pos].size(); j++) {
-                    double sum = min(t_capacity[checkResult[pos][j].first], remain * (checkResult[pos][j].second / weight_total));
+                    double sum = min(min(t_capacity[checkResult[pos][j].first], (double)checkResult[pos][j].second), remain * (checkResult[pos][j].second / weight_total));
                     t_capacity[checkResult[pos][j].first] -= sum;
                     t_capacity[pos] += sum;
                     node.push(checkResult[pos][j].first);
                 }
             }
-            // if(timer > 1000){
-            //     for(int c = 0; c < t_capacity.size(); c++){
-            //         if(t_capacity[c] > 29){
-            //             cout << c << " ";
-            //         }
-            //     }
-            //     cout << "total: " << total <<endl;
-            //     value = max(value, timer);
-            //     break;
-            // }
+            if(timer == 7000){
+                for(int c = 0; c < t_capacity.size(); c++){
+                    if(t_capacity[c] > 29){
+                        cout << c << " ";
+                    }
+                }
+                //cout << "total: " << total <<endl;
+                value = max(value, timer);
+                break;
+            }
         }
-        cout << "sum finish" <<endl;
+        //cout << total << endl;
+        //cout << "sum finish" <<endl;
         value = max(value, timer);
     }
-    cout << value <<endl;
+    //cout << value <<endl;
     return value;
 }
 
@@ -255,7 +256,7 @@ void Solution::saSolve(){
             //cout << "evaluate begin" << endl;
             int newValue = evaluate(checkResult);
             //cout << "evaluate end" << endl;
-            if(canAccept(temperature , newValue , nowValue)){
+            if(newValue < 7000 && canAccept(temperature , newValue , nowValue)){
                 nowResult = checkResult;
                 nowValue = newValue;
                 if(nowValue < bestValue){
