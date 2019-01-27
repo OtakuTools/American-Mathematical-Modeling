@@ -19,4 +19,4 @@ According to our module, the map of Louvre is equal to the following graph:
 [此处应有图]
 Note that coloured nodes stand for exits and stairs.
 
-According to the assumptions, it is obvious that the solution of the module is a spanning tree with a super exit being its root.
+According to the assumptions, the solution of the module would be a spanning tree with a super exit being its root. It is obvious that we should balance workload of stairs and exits to acchieve the minimal evacuation time.
