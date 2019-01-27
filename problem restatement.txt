@@ -1,0 +1,22 @@
+X. Problem Restatment
+The requirement of the problem is to make a evacuation plan for the Louvre. In our module, it can divided into three parts. The first part is to arrange the optimal way out for each room. The Second part would be distributing the emergency personnel into Louvre to help evacutaion and keep things in order. The last part is to take all factors into consideration such as language, diables and different kinds of threat. 
+
+Y. Moduling
+Y.1 Aussumption
+0. Visitors in the same room will evacuate together as a unit which means in each room only one door is available at a time.
+1. Visitors are told the optimal path to exit so they know exactly where to go immediatly.
+2. Visitors will stick to the plan because they have no idea how to get out.
+3. Being told the optimal way out, visitors are calm enough to wait for evacuation in order, which means the traffic capacity of each door is constant.
+4. Realtime scheduling is needed during evacuation because threats may result in some unavailable path.
+5. Realtime scheduling is necessary because extra available path will be broadcasted, which come from the hidden exit points such as employee entrances.
+6. Some emergency personnel are already in the Louvre at the beginning of evacuation, others need to get in position as soon as possible.
+7. A super exit is a vitual space means the safety zone, which is connected to real exit points with weighted edges represent the traffic capacity of exits.
+
+
+Y.2
+The first part can be seen as solving a flow problem. A single room in Louvre can be abstracted as a node, which is connected to adjacent rooms by weighted edges. The weight of a node represents the number of visitors it contains, while the weight of a edge represents the traffic capacity of the door ( people per second ). The exits will consume visitors at a constant rate and people will 'flow to' the next room according to the given path. Our goal is to find an evacuation path for each room so that the Louvre can be empty as quickly as possible. 
+According to our module, the map of Louvre is equal to the following graph:
+[此处应有图]
+Note that coloured nodes stand for exits and stairs.
+
+According to the assumptions, it is obvious that the solution of the module is a spanning tree with a super exit being its root.
