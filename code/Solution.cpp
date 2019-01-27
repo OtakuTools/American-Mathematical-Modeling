@@ -121,17 +121,20 @@ inline void display(map<int, int>& encodemap, vector< vector<pair<int , int> > >
     ofstream cout;
     cout.open("result2.txt");
     cout << nowResult.size() << endl;
-
+    vector<int> rec(nowResult.size(), 0);
     for(int i = 0; i < nowResult.size(); i++) {
 
         // cout << "node: " << encodemap[i] << endl;
-        // for(int j = 0; j < nowResult[i].size(); j++) {
-        //     cout << "tar_node: " << encodemap[nowResult[i][j].first] << " " << "weight: " << nowResult[i][j].second << endl;
-        // }
+        //for(int j = 0; j < nowResult[i].size(); j++) {
+            //cout << encodemap[i] << " -> " <<encodemap[nowResult[i][j].first] << endl;
+        //}
 
         for(int j = 0; j < nowResult[i].size(); j++){
-            cout << encodemap[i] << " -> " << encodemap[nowResult[i][j].first] << endl;
+            rec[nowResult[i][j].first]++;
         }
+    }
+    for(int j = 0; j < rec.size(); j++){
+        cout << encodemap[j] << " -> " << rec[j] << endl;
     }
     cout.close();
 }
@@ -173,7 +176,6 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
     //todo
     //use nowResult to generate new result
     vector< vector<pair<int , int> > > newResult = nowResult;
-    srand(time(0));
     int pos = rand() % newResult.size();
     while(parent[pos] == -1) {
         pos = rand() % newResult.size();
@@ -208,7 +210,7 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
     for(vector<pair<int , int> >::iterator i = newResult[parent[pos]].begin(); i != newResult[parent[pos]].end();) {
         //cout << (*i).first << endl;
         if((*i).first == pos){
-            //cout << (*i).first << endl;
+            cout << (*i).first << endl;
             i = newResult[parent[pos]].erase(i);
             break;
         }
@@ -246,7 +248,6 @@ void Solution::saSolve(){
     double beginT = 100, endT = 0.1, alpha = 0.9;
     double temperature = beginT;
     int inLoop = 200;
-    cout << "c" << endl;
     int nowValue = evaluate(nowResult);
     int bestValue = nowValue;
     bestResult = nowResult;
