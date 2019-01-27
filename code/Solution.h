@@ -8,6 +8,7 @@
 #include <fstream>
 #include <map>
 #include <ctime>
+#include <assert.h>
 
 using namespace std;
 
@@ -18,7 +19,7 @@ public:
 private:
 
 
-    vector<int> exit, tag, parent;
+    vector<int> exit, tag, parent, temp_parent;
     vector<double> capacity,
                    maxCapacity,
                    speed;

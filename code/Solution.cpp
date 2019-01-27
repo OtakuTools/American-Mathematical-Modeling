@@ -38,12 +38,6 @@ void Solution::solve(string path){
         ifs >> capacity[i] >> maxCapacity[i];
     }
 
-    for(int i = 0 ; i < nodeNum ; i++){
-        cout << capacity[i] << " ";
-    }
-    cout <<endl;
-
-
     for(int i = 0 ; i < exitNum ; i++){
         ifs >> exit[i] ;
     }
@@ -113,25 +107,26 @@ int Solution::evaluate(vector< vector<pair<int , int> > > checkResult ){
         //cout << "sum finish" <<endl;
         value = max(value, timer);
     }
-    cout << value <<endl;
+    //cout << value <<endl;
     return value;
 }
 
-inline void display(map<int, int>& encodemap, vector< vector<pair<int , int> > >& nowResult) {
+inline void display(map<int, int>& encodemap, vector< vector<pair<int , int> > >& nowResult, string file = "result2.txt") {
     ofstream cout;
-    cout.open("result2.txt");
+    cout.open(file.c_str());
     cout << nowResult.size() << endl;
     vector<int> rec(nowResult.size(), 0);
     for(int i = 0; i < nowResult.size(); i++) {
 
         // cout << "node: " << encodemap[i] << endl;
-        //for(int j = 0; j < nowResult[i].size(); j++) {
-            //cout << encodemap[i] << " -> " <<encodemap[nowResult[i][j].first] << endl;
-        //}
-
-        for(int j = 0; j < nowResult[i].size(); j++){
+        for(int j = 0; j < nowResult[i].size(); j++) {
+            cout << encodemap[i] << " -> " <<encodemap[nowResult[i][j].first] << endl;
             rec[nowResult[i][j].first]++;
         }
+
+        //for(int j = 0; j < nowResult[i].size(); j++){
+        //    rec[nowResult[i][j].first]++;
+        //}
     }
     for(int j = 0; j < rec.size(); j++){
         cout << encodemap[j] << " -> " << rec[j] << endl;
@@ -176,8 +171,9 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
     //todo
     //use nowResult to generate new result
     vector< vector<pair<int , int> > > newResult = nowResult;
+    temp_parent = parent;
     int pos = rand() % newResult.size();
-    while(parent[pos] == -1) {
+    while(temp_parent[pos] == -1) {
         pos = rand() % newResult.size();
     }
 
@@ -197,7 +193,7 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
     }
     vector<pair<int , int> > temp;
     for(int i = 0; i < graph[pos].size(); i++) {
-        if(!(parent[pos] == graph[pos][i].first || check[graph[pos][i].first])) {
+        if(!(temp_parent[pos] == graph[pos][i].first || check[graph[pos][i].first])) {
             temp.push_back(graph[pos][i]);
         }
     }
@@ -206,11 +202,9 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
     }
     int newPos = temp[int(rand() % temp.size())].first;
     //delete pos from its parent
-    //cout << parent[pos] << " " << pos <<endl;
-    for(vector<pair<int , int> >::iterator i = newResult[parent[pos]].begin(); i != newResult[parent[pos]].end();) {
-        //cout << (*i).first << endl;
+    //cout << "parent: " << encode[temp_parent[pos]] << " " << encode[pos] <<endl;
+    for(vector<pair<int , int> >::iterator i = newResult[temp_parent[pos]].begin(); i != newResult[temp_parent[pos]].end();) {
         if((*i).first == pos){
-            cout << (*i).first << endl;
             i = newResult[parent[pos]].erase(i);
             break;
         }
@@ -219,14 +213,28 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
         }
     }
     // add pos to newPos
-    parent[pos] = newPos;
+    // should not refresh parent
+    temp_parent[pos] = newPos;
     tag[pos] = tag[newPos];
+    //cout << "new parent: " << encode[temp_parent[pos]] << " " << encode[pos] <<endl;
     for(int i = 0; i < graph[newPos].size(); i++) {
         if(graph[newPos][i].first == pos){
             newResult[newPos].push_back(graph[newPos][i]);
             break;
         }
     }
+
+    int t_size = 0;
+    for(int i = 0; i < newResult.size(); i++) {
+        t_size += newResult[i].size();
+    }
+    // if(t_size != 196){
+    //     cout << "aaa" << endl;
+    //     display(encode, nowResult);
+    //     cout << "aaa" << endl;
+    //     display(encode, newResult, "result3.txt");
+    // }
+    assert(t_size == 196);
     return newResult;
 }
 
@@ -254,15 +262,13 @@ void Solution::saSolve(){
 
     while(temperature >= endT){
         for(int j = 0 ; j < inLoop ; j++){
-            //cout << "generate begin" << endl;
             vector< vector<pair<int , int> > > checkResult = generateNewResult();
-            //cout << "generate end" << endl;
-            //cout << "evaluate begin" << endl;
+            //display(encode, checkResult);
             int newValue = evaluate(checkResult);
-            //cout << "evaluate end" << endl;
             if(newValue < 7000 && canAccept(temperature , newValue , nowValue)){
                 nowResult = checkResult;
                 nowValue = newValue;
+                parent = temp_parent;
                 if(nowValue < bestValue){
                     bestValue = nowValue;
                     bestResult = nowResult;
