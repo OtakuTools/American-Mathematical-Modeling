@@ -81,21 +81,38 @@ int Solution::evaluate(vector< vector<pair<int , int> > > checkResult ){
                 int pos = node.front();
                 node.pop();
                 double weight_total = 0;
-                for(int j = 0; checkResult[pos].size() > 0 && j < checkResult[pos].size(); j++) {
+
+                if(checkResult[pos].size() == 0 ){
+                    if(t_capacity[pos] < 0.01 &&  parent[pos] != -1 ){
+                        for(auto iter = checkResult[ parent[pos] ].begin() ;
+                                            iter < checkResult[ parent[pos] ].end() ; iter++){
+                            if( iter->first == pos ){
+                                checkResult[ parent[pos] ].erase( iter );
+                                break;
+                            }
+                        }
+                    }
+                    continue;
+                }
+
+                for(int j = 0;  j < checkResult[pos].size(); j++) {
+
                     weight_total += checkResult[pos][j].second;
                 }
+
                 int remain = maxCapacity[pos] - t_capacity[pos];
-                for(int j = 0; checkResult[pos].size() > 0 && j < checkResult[pos].size(); j++) {
+                for(int j = 0; j < checkResult[pos].size(); j++) {
                     double sum = min(min(t_capacity[checkResult[pos][j].first], (double)checkResult[pos][j].second), remain * (checkResult[pos][j].second / weight_total));
                     t_capacity[checkResult[pos][j].first] -= sum;
                     t_capacity[pos] += sum;
                     node.push(checkResult[pos][j].first);
                 }
             }
+
             if(timer == 7000){
                 for(int c = 0; c < t_capacity.size(); c++){
                     if(t_capacity[c] > 29){
-                        cout << c << " ";
+                        cout << c << "++";
                     }
                 }
                 //cout << "total: " << total <<endl;

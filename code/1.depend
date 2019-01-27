@@ -1,20 +1,9 @@
 # depslib dependency file v1.0
-1548486939 source:c:\users\dell\desktop\2019_mcm-icm_problems\code\code\main.cpp
+1548574649 source:c:\users\dell\desktop\american-mathematical-modeling-master\american-mathematical-modeling\code\main.cpp
 	<iostream>
 	"Solution.h"
 
-1548486943 c:\users\dell\desktop\2019_mcm-icm_problems\code\code\solution.h
-	<vector>
-	<iostream>
-
-1548486951 source:c:\users\dell\desktop\2019_mcm-icm_problems\code\code\solution.cpp
-	"Solution.h"
-
-1548561153 source:c:\users\asus\desktop\mcm\code\main.cpp
-	<iostream>
-	"Solution.h"
-
-1548564261 c:\users\asus\desktop\mcm\code\solution.h
+1548573753 c:\users\dell\desktop\american-mathematical-modeling-master\american-mathematical-modeling\code\solution.h
 	<vector>
 	<queue>
 	<cmath>
@@ -24,7 +13,4 @@
 	<map>
 	<ctime>
 	<assert.h>
-
-1548562810 source:c:\users\asus\desktop\mcm\code\solution.cpp
-	"Solution.h"
 
