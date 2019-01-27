@@ -113,13 +113,13 @@ int Solution::evaluate(vector< vector<pair<int , int> > > checkResult ){
         //cout << "sum finish" <<endl;
         value = max(value, timer);
     }
-    //cout << value <<endl;
+    cout << value <<endl;
     return value;
 }
 
 inline void display(map<int, int>& encodemap, vector< vector<pair<int , int> > >& nowResult) {
     ofstream cout;
-    cout.open("result.txt");
+    cout.open("result2.txt");
     cout << nowResult.size() << endl;
 
     for(int i = 0; i < nowResult.size(); i++) {
@@ -173,7 +173,7 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
     //todo
     //use nowResult to generate new result
     vector< vector<pair<int , int> > > newResult = nowResult;
-
+    srand(time(0));
     int pos = rand() % newResult.size();
     while(parent[pos] == -1) {
         pos = rand() % newResult.size();
@@ -204,9 +204,13 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
     }
     int newPos = temp[int(rand() % temp.size())].first;
     //delete pos from its parent
-    for(auto i = newResult[parent[pos]].begin(); i != newResult[parent[pos]].end(); ) {
+    //cout << parent[pos] << " " << pos <<endl;
+    for(vector<pair<int , int> >::iterator i = newResult[parent[pos]].begin(); i != newResult[parent[pos]].end();) {
+        //cout << (*i).first << endl;
         if((*i).first == pos){
+            //cout << (*i).first << endl;
             i = newResult[parent[pos]].erase(i);
+            break;
         }
         else {
             i++;
@@ -221,7 +225,6 @@ vector< vector<pair<int , int> > > Solution::generateNewResult(){
             break;
         }
     }
-
     return newResult;
 }
 

@@ -14,7 +14,7 @@
 	<iostream>
 	"Solution.h"
 
-1548516402 c:\users\asus\desktop\mcm\code\solution.h
+1548553389 c:\users\asus\desktop\mcm\code\solution.h
 	<vector>
 	<queue>
 	<cmath>
@@ -22,7 +22,8 @@
 	<iostream>
 	<fstream>
 	<map>
+	<ctime>
 
-1548515278 source:c:\users\asus\desktop\mcm\code\solution.cpp
+1548554353 source:c:\users\asus\desktop\mcm\code\solution.cpp
 	"Solution.h"
 
