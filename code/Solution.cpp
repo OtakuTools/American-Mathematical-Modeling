@@ -277,5 +277,6 @@ void Solution::saSolve(){
         }
         temperature = temperature * alpha;
     }
+    cout << bestValue <<endl;
     display(encode, bestResult);
 }
