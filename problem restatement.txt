@@ -14,14 +14,20 @@ Y.1 Aussumption
 
 
 Y.2
-The first part can be seen as solving a flow problem. A single room in Louvre can be abstracted as a node, which is connected to adjacent rooms by weighted edges. The weight of a node represents the number of visitors it contains, while the weight of a edge represents the traffic capacity of the door ( people per second ). The exits will consume visitors at a constant rate and people will 'flow to' the next room according to the given path. Our goal is to find an evacuation path for each room so that the Louvre can be empty as quickly as possible. 
+The first part can be seen as solving a flow network problem. A single room in Louvre can be abstracted as a node, which is connected to adjacent rooms by weighted edges. The weight of a node represents the number of visitors it contains, while the weight of a edge represents the traffic capacity of the door ( people per second ). The exits will consume visitors at a constant rate and people will 'flow to' the next room according to the given path. Our goal is to find an evacuation path for each room so that the Louvre can be empty as quickly as possible. 
 According to our module, the map of Louvre is equal to the following graph, note that coloured nodes stand for exits and stairs:
 [此处应有图]
 
 
 The evacuation process can be discribed as following:
-For each second, exit points allow a constant number of visitors get out of Louvre which will result in some empty space in exits. In another words, the weight of exit nodes will derease in a constant rate. Immediately, people in adjacent rooms will crowd into this room in the form of transmitting weight from adjacent nodes to exit nodes.The flowing speed of weight is limitted by the traffic capacity of the door described as edge weight between two nodes. Recursively, weight of end nodes( also call leaf node ) will ultimately flow to safety zone. Limited by flowing speed, different evacuation path will cost different time to empty the whole Louvre.
+For each second, exit points allow a constant number of visitors get out of Louvre which will result in some empty space in exits. In another words, the weight of exit nodes will derease in a constant rate. Immediately, people in adjacent rooms will crowd into this room in the form of transmitting weight from adjacent nodes to exit nodes.The flowing speed of weight is limitted by the traffic capacity of the door described as edge weight between two nodes. Recursively, weight of end nodes( also call leaf node ) will ultimately flow to safety zone. Limited by flowing speed, different evacuation path will cost different time to empty the whole Louvre.To make an evacuation plan is to find the best way out for each room. To make use of all stairs and exits, load balance must be considered.
+
+To make the model praticle, we assume the number of people enterring is the weighted sum of people exiting adjacent room. The weight is defined as the smaller value between flowing speed and capacity of adjacent room. In mathematics, it is discribed as:
+[此处是流入公式 I=Σαci, α=min{ V ，C }/（Cmax-C） ]
 
 
-To make an evacuation plan is to find the best way out for each room. The definition of best is to achieve the minimal evacuation time.
-According to the assumptions, the solution of the module would be a spanning tree with a super exit being its root. It is obvious that we should balance workload of stairs and exits to acchieve the minimal evacuation time.
+According to the assumptions, the solution of the model would be a spanning tree with the super exit being its root. Each node of the tree represents a room in Louvre. The path from node to root is the evacuation path of the room. The weight of a node will be zero if and only if the room is empty. Once all nodes are weight zero, it means the evacuation is finished. Given the spanning tree, the evacuation time of this plan is the duration from the beginning to the moment that all rooms are empty.
+
+
+
+It is obvious that we should balance workload of stairs and exits to acchieve the minimal evacuation time.
