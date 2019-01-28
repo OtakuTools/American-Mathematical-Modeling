@@ -44,9 +44,9 @@ void Solution::solve(string path){
     ifs.close();
 
     read(nodeNum);
-    cout << "a" <<endl;
+
     generateFirstResult();
-    cout << "b" <<endl;
+
     saSolve();
 }
 
@@ -137,7 +137,7 @@ inline void display(map<int, int>& encodemap, vector< vector<pair<int , int> > >
 
         // cout << "node: " << encodemap[i] << endl;
         for(int j = 0; j < nowResult[i].size(); j++) {
-            cout << encodemap[i] << " -> " <<encodemap[nowResult[i][j].first] << endl;
+            cout <<encodemap[nowResult[i][j].first] << " -> " << encodemap[i] << endl;
             rec[nowResult[i][j].first]++;
         }
 
