@@ -1,0 +1,7 @@
+According to Louvre[1], most of the visitors are foreigners. Nearly 20% of visitors use English as their mother language. The second most used foreign languagu is Chinese, which make up for 10% of visitors. Other languages like German and Spanish are also common as well.
+
+Besides, the growing tendency of visitors is also a significant factor. Visitors from Russian are in a rapid growth while Japanese take the second place.
+
+Emergency personnel should at least speak a fluence English. Other than that, Chinese, Russian and Japanese are also recommanded. For safety consideration, safety signs and broadcast should apply all languages mentioned above.
+
+Language factor will significantly affect the evacuation. If visitors cannot understand the evacuation plan, they will get panic and slow down the evacuation. In our model, language factor can be reflected by Wi(). Wi is related to language coverage rate and the traffic capacity of the door. That is:
